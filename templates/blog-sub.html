@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="A place you can buy and sell anything.">
+    <meta name="keywords" content="broke, logs, broke.com, scam">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Broke.com | Blog Post</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/elegant-icons.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__option">
+            <div class="offcanvas__links">
+                {% if not session['username']%}
+                <a href="/signin">Sign in</a>
+                {% else %}
+                <a href="/logout">Logout</a>
+                {% endif %}
+                <a href="#">FAQs</a>
+            </div>
+            <div class="offcanvas__top__hover">
+                <span>Usd <i class="arrow_carrot-down"></i></span>
+                <ul>
+                    <li>USD</li>
+                    <li>GHS</li>
+                    <li>NGN</li>
+                </ul>
+            </div>
+        </div>
+        <div class="offcanvas__nav__option">
+            <a href="#" class="search-switch"><img src="{{ url_for('static', filename='images/icon/search.png')}}" alt=""></a>
+            <a href="#"><img src="{{ url_for('static', filename='images/icon/heart.png')}}" alt=""></a>
+            <a href="#"><img src="{{ url_for('static', filename='images/icon/cart.png')}}" alt=""> <span>0</span></a>
+            <div class="price">$0.00</div>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__text">
+            <p>The best bet sharing platform in Africa</p>
+        </div>
+    </div>
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="header__top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-7">
+                        <div class="header__top__left">
+                            <p>The best bet sharing platform in Africa</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-5">
+                        <div class="header__top__right">
+                            <div class="header__top__links">
+                                {% if not session['username']%}
+                                <a href="/signin">Sign in</a>
+                                {% else %}
+                                <a href="/logout">Logout</a>
+                                {% endif %}
+                            </div>
+                            <div class="header__top__hover">
+                                <span>Usd <i class="arrow_carrot-down"></i></span>
+                                <ul>
+                                    <li>USD</li>
+                                    <li>GHS</li>
+                                    <li>NGN</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__logo">
+                        <a href="/"><img src="{{ url_for('static', filename='images/logo.jpg')}}" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="#">Slips</a></li>
+                            <li><a href="#">Blog</a></li>
+                            {% if session['username']%}
+                            <li class="active"><a href="#">Account</a>
+                                <ul class="dropdown">
+                                    <li><a href="/submission">Share Odds</a></li>
+                                    <li><a href="/dashboard">Purchases</a></li>
+                                    <li><a href="">SMS Sender</a></li>
+                                    <li><a href="#">SMS Bomber</a></li>
+                                    <li><a href="#">Email Bomber</a></li>
+                                    <li><a href="/settings">Settings</a></li>
+                                </ul>
+                            </li>
+                            {% endif %}
+                            <li><a href="#">About</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__nav__option">
+                        <a href="#" class="search-switch"><img src="{{ url_for('static', filename='images/icon/search.png')}}" alt=""></a>
+                        <a href="#"><img src="{{ url_for('static', filename='images/icon/heart.png')}}" alt=""></a>
+                        <a href="#"><img src="{{ url_for('static', filename='images/icon/cart.png')}}" alt=""> <span>0</span></a>
+                        <div class="price">$0.00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Add a Blog Post</h4>
+                        <div class="breadcrumb__links">
+                            <a href="./index.html">Home</a>
+                            <a href="./shop.html">Shop</a>
+                            <span>Add a Blog Post</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Checkout Section Begin -->
+    <section class="checkout spad">
+        <div class="container">
+            <div class="checkout__form">
+                <form method="post">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-6">
+                            {% for category, message in get_flashed_messages(with_categories=True)%}
+                            <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                                <strong>{{message}}</strong>
+                                <button class="close" type="button" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% endfor %}
+                            <h6 class="checkout__title">Blog Details</h6>
+                            <div class="checkout__input">
+                                <p>Title<span>*</span></p>
+                                <input type="text" name="title" placeholder="Blog Title" required maxlength="200">
+                            </div>
+                            
+                            <div class="checkout__input">
+                                <p>Quote<span>*</span></p>
+                                <input type="text" name="quote" placeholder="Blog Quote" required maxlength="300">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="checkout__input">
+                                        <p>Content<span>*</span></p>
+                                        <div class="contact__form">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <textarea placeholder="Blog Content" name="content" maxlength="1000" required></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                                
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="checkout__order">
+                                <h4 class="order__title">Agreement</h4>
+                                <div class="checkout__order__products">
+                                    The slip  you are submitting is currently free and  will be accessible to anyone who uses Broke.com 
+                                </div>
+                                
+                                <p>Slip will be void 5 minutes to the starting time.</p>
+                                <div class="checkout__input__checkbox">
+                                    <label for="acc-or">
+                                        Accept all Agreements
+                                        <input type="checkbox" id="acc-or" checked="true" required>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <button type="submit" class="site-btn">Add Item</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- Checkout Section End -->
+
+    <!-- Footer Section Begin -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="footer__about">
+                        <div class="footer__logo">
+                            <a href="#"><img src="{{ url_for('static', filename='images/footer-logo.png')}}" alt=""></a>
+                        </div>
+                        <p>The customer is at the heart of our unique business model, which includes design.</p>
+                        <a href="#"><img src="{{ url_for('static', filename='images/payment.png')}}" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>Shopping</h6>
+                        <ul>
+                            <li><a href="#">Clothing Store</a></li>
+                            <li><a href="#">Trending Shoes</a></li>
+                            <li><a href="#">Accessories</a></li>
+                            <li><a href="#">Sale</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>Shopping</h6>
+                        <ul>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Payment Methods</a></li>
+                            <li><a href="#">Delivary</a></li>
+                            <li><a href="#">Return & Exchanges</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>NewsLetter</h6>
+                        <div class="footer__newslatter">
+                            <p>Subscribe to our newsletter now to get notified of new items.</p>
+                            <form action="#">
+                                <input type="text" placeholder="Your email">
+                                <button type="submit"><span class="icon_mail_alt"></span></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="footer__copyright__text">
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        <p>Copyright ©
+                            <script>
+                                document.write(new Date().getFullYear());
+                            </script>
+                            All rights reserved | Made with <i class="fa fa-heart-o"
+                            aria-hidden="true"></i> from <a href="#" >Broke.com</a>
+                        </p>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Search Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search End -->
+
+    <!-- Js Plugins -->
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.nice-select.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.nicescroll.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.magnific-popup.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.countdown.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.slicknav.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/mixitup.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/owl.carousel.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+</body>
+
+</html>
