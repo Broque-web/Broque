@@ -404,6 +404,9 @@ ol {
 	display: inline-block;
 }
 
+.header__logo a img{
+	height: 32px;
+}
 .header__menu {
 	text-align: center;
 	padding: 26px 0 25px;
