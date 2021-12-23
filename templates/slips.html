@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="A place you can buy and sell anything.">
+    <meta name="description" content="The best bet slip sharing platform in Africa, Join now!! lets gamble.">
     <meta name="keywords" content="Broque, bet, Broque.com, slips">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -223,7 +223,11 @@
                                     <div class="rating">
                                         <span>{{slip.likes}}</span> Likes
                                     </div>
-                                    <h5 id="like">{{ slip.price }}</h5>
+                                    {% if slip.price == '0.00' %}
+                                    <h5 id="like">Free</h5>
+                                    {% else %}
+                                    <h5 id="like">{{ slip.price }} <span style="font-size: 14px; color: #1d5ab6;">{{ session['currency']}}</span></h5>
+                                    {% endif %}
                                     <div class="product__color__select" style="font-size: 13px;">
                                         {{slip.odds}} odds
                                     </div>

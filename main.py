@@ -4,8 +4,9 @@ from re import X
 import string
 import random
 import os
+import time
 import json
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import unique
 import hashlib
 from flask import Flask, render_template, url_for, request, flash, redirect, session, jsonify, make_response
@@ -50,7 +51,7 @@ class Slip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(10), unique=True, nullable=False)
     bookmaker = db.Column(db.String(20), nullable=False)
-    time = db.Column(db.String(10))
+    time = db.Column(db.DateTime)
     price = db.Column(db.String(10))
     description = db.Column(db.String())
     slip_owner = db.Column(db.Integer)
@@ -60,6 +61,7 @@ class Slip(db.Model):
     likes = db.Column(db.Integer, default=0)
     bkl = db.Column(db.String())
     date = db.Column(db.String(), default=datetime.utcnow().strftime("%d %b, %Y"))
+    expired = db.Column(db.String(), default="Not expired")
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -106,6 +108,20 @@ def add_session(username):
         pass
     else:
         session['username'] = username
+
+def expired():
+    slips = Slip.query.all()
+    for slip in slips:
+        i_time = slip.time
+        f_time = datetime.now().replace(microsecond=0, second=0)
+        time = i_time-f_time
+        if str(time).startswith("-"):
+            slip.expired = "Expired"
+        elif int(str(time).split(":")[1]) <= 5:
+            slip.expired = "Expired"
+        else:
+            slip.expired = "Not expired"
+    db.session.commit()
 
 def get_currency(country):
     with open("static/src/c_code.json") as f:
@@ -157,16 +173,19 @@ def generate_ref(size):
 
 @app.route("/")
 def home():
-    home_slips = Slip.query.all()[0:8]
+    expired()
+    home_slips = Slip.query.filter_by(expired="Not expired").all()[0:8]
     blogs = Blog.query.all()[0:3]
     return render_template("index.html", home_slips=home_slips, blogs=blogs)
 
 @app.route("/about")
 def about():
+    expired()
     return render_template("about.html")
     
 @app.route("/blog-sub", methods=["POST", "GET"])
 def blogSub():
+    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return redirect(url_for("signin"))
@@ -183,6 +202,7 @@ def blogSub():
 
 @app.route("/signup", methods=["POST", "GET"])
 def signup():
+    expired()
     if is_logged_in():
         return redirect(url_for("home"))
     elif request.method == "POST":
@@ -211,6 +231,7 @@ def signup():
 
 @app.route("/signin", methods=["POST", "GET"])
 def signin():
+    expired()
     if is_logged_in():
         return redirect(url_for("home"))
     elif request.method == "POST":
@@ -232,10 +253,12 @@ def signin():
 
 @app.route("/phishing")
 def phishing():
+    expired()
     return render_template("slips.html")
     
 @app.route("/logout")
 def logout():
+    expired()
     delete_session()
     return redirect(url_for("signin"))
 
@@ -243,31 +266,33 @@ def logout():
 
 @app.route("/slips")
 def slips():
+    expired()
     query = request.args.get('query')
     if query is None:
-        slips = Slip.query.all()[0:12]
+        slips = Slip.query.filter_by(expired="Not expired").all()[0:12]
     else:
         i = int(query) * 12
         x = (int(query) + 1) * 2
-        slips = Slip.query.all()[i:x]
+        slips = Slip.query.filter_by(expired="Not expired").all()[i:x]
     return render_template("slips.html", slips=slips)
 
 
 @app.route('/dashboard')
 def cart():
+    expired()
     return render_template('dashboard.html')
 
 
 
 @app.route("/submission", methods=["POST", "GET"])
 def submission():
+    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return redirect(url_for("signin"))
     elif request.method == "POST":
-        print(request.form)
         code = request.form["code"]
-        time = request.form["time"]
+        time = datetime.strptime(f"{datetime.now().date()} {request.form['time']}", "%Y-%m-%d %H:%M")
         bookmaker = request.form["bookmaker"]
         #price = request.form["price"]
         price = "0.00"
@@ -289,6 +314,7 @@ def submission():
 
 @app.route("/detail",  methods=["POST", "GET"])
 def detail():
+    expired()
     ref = request.args.get('ref')
     if not is_logged_in():
         flash("Please login first", "danger")
@@ -297,15 +323,18 @@ def detail():
         return redirect(url_for("home"))
     elif Slip.query.filter_by(slip_ref=ref).first() == None:
         return redirect(url_for("home"))
+    elif Slip.query.filter_by(slip_ref=ref).first().expired == "Expired":
+        return redirect(url_for("home"))
     slip = Slip.query.filter_by(slip_ref=ref).first()
     owner = User.query.filter_by(id=slip.slip_owner).first()
     name = owner.firstname + " " + owner.lastname
     comments = SlipComment.query.filter_by(slip_id=slip.id)
-    addt_slips = Slip.query.all()[0:4]
+    addt_slips = Slip.query.filter_by(expired="Not expired").all()[0:4]
     return render_template("slip-detail.html", slip=slip, name=name, comments=comments, noc=len(comments.all()), addt_slips=addt_slips)
 
 @app.route("/blog-detail",  methods=["POST", "GET"])
 def blogDetail():
+    expired()
     ref = request.args.get('ref')
     if ref == None:
         return redirect(url_for("home"))
@@ -319,6 +348,7 @@ def blogDetail():
 
 @app.route('/getcomments',  methods=["GET"])
 def getComments():
+    expired()
     jsons = {'comments':[]}
     ref = request.args.get("ref")
     id = Slip.query.filter_by(slip_ref=ref).first().id
@@ -338,6 +368,7 @@ def getComments():
 
 @app.route("/addcomments", methods=["POST"])
 def addCommentS():
+    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return make_response(jsonify({'url': url_for('signin')}), 201)
@@ -359,6 +390,7 @@ def addCommentS():
 
 @app.route("/addlike", methods=["POST"])
 def addLikes():
+    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return make_response(jsonify({'url': url_for('signin')}), 201)
@@ -387,6 +419,7 @@ def addLikes():
 
 @app.route("/settings")
 def settings():
+    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return redirect(url_for("signin"))
