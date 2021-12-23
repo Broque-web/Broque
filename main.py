@@ -4,6 +4,7 @@ from re import X
 import string
 import random
 import os
+import json
 from datetime import datetime, timezone
 from enum import unique
 import hashlib
@@ -11,7 +12,6 @@ from flask import Flask, render_template, url_for, request, flash, redirect, ses
 from flask_cors.decorator import cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import backref, defaultload
-import json
 from flask.sessions import SecureCookieSessionInterface
 from werkzeug.datastructures import Headers
 from flask_cors import CORS, cross_origin
@@ -26,6 +26,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 db = SQLAlchemy(app)
 CORS(app)
 session_cookie = SecureCookieSessionInterface().get_signing_serializer(app)
+
 
 #------------------------------------------------------
 #DATABASE MODELS
@@ -106,6 +107,28 @@ def add_session(username):
     else:
         session['username'] = username
 
+def get_currency(country):
+    with open("static/src/c_code.json") as f:
+        c_code = json.load(f)
+
+    with open("static/src/c_udt.json") as f:
+        c_udt = json.load(f)
+
+    code = ""
+    for countries in c_udt:
+        if countries["name"] == country:
+            code =  countries["code"]
+            break
+
+    currency = ""
+    for codes in c_code:
+        if codes["country"] == code:
+            currency = codes["currency"]
+            break
+    #print(code)
+    return currency
+
+
 def hash(password):
     hash = hashlib.sha256(password.encode("utf-8")).hexdigest()
     return hash
@@ -126,6 +149,7 @@ def generate_ref(size):
     if slip is not None:
         generate_ref()
     return ref
+
 
 
 #------------------------------------------------------
@@ -201,6 +225,7 @@ def signin():
             flash("No field should be left blank")
         else:
             add_session(username)
+            session['currency'] = get_currency(user.country)
             return redirect(url_for("home"))
         return render_template("signin.html")
     return render_template("signin.html")
@@ -240,10 +265,12 @@ def submission():
         flash("Please login first", "danger")
         return redirect(url_for("signin"))
     elif request.method == "POST":
+        print(request.form)
         code = request.form["code"]
         time = request.form["time"]
         bookmaker = request.form["bookmaker"]
-        price = request.form["price"]
+        #price = request.form["price"]
+        price = "0.00"
         description = request.form["description"]
         matches = request.form['matches']
         odds = request.form['odds']

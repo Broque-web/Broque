@@ -48,19 +48,24 @@
                 <a href="#">FAQs</a>
             </div>
             <div class="offcanvas__top__hover">
-                <span>Usd <i class="arrow_carrot-down"></i></span>
+                {% if not session['username'] %}
+                <span>USD <i class="arrow_carrot-down"></i></span>
+                {% else %}
+                <span>{{session['currency']}} <i class="arrow_carrot-down"></i></span>
+                {% endif %}
+                
                 <ul>
+                    <li>{{session['currency']}}</li>
                     <li>USD</li>
-                    <li>GHS</li>
-                    <li>NGN</li>
                 </ul>
             </div>
         </div>
         <div class="offcanvas__nav__option">
-            <a href="#" class="search-switch"><img src="{{ url_for('static', filename='images/icon/search.png') }}" alt=""></a>
-            <a href="#"><img src="{{ url_for('static', filename='images/icon/heart.png') }}" alt=""></a>
-            <a href="#"><img src="{{ url_for('static', filename='images/icon/cart.png') }}" alt=""></a>
-            <div class="price">$0.00</div>
+            {% if not session['username']%}
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
+            {% else %}
+            <div class="price"><span style="font-size: 14px; color: gray;">{{session['currency']}}</span> 0.00</div>
+            {% endif %}
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__text">
@@ -90,11 +95,15 @@
                                 <a href="#">FAQs</a>
                             </div>
                             <div class="header__top__hover">
-                                <span>Usd <i class="arrow_carrot-down"></i></span>
+                                {% if not session['username'] %}
+                                <span>USD <i class="arrow_carrot-down"></i></span>
+                                {% else %}
+                                <span>{{session['currency']}} <i class="arrow_carrot-down"></i></span>
+                                {% endif %}
+                                
                                 <ul>
+                                    <li>{{session['currency']}}</li>
                                     <li>USD</li>
-                                    <li>GHS</li>
-                                    <li>NGN</li>
                                 </ul>
                             </div>
                         </div>
@@ -133,10 +142,11 @@
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        <a href="#" class="search-switch"><img src="{{ url_for('static', filename='images/icon/search.png') }}" alt=""></a>
-                        <a href="#"><img src="{{ url_for('static', filename='images/icon/heart.png') }}" alt=""></a>
-                        <a href="#"><img src="{{ url_for('static', filename='images/icon/cart.png') }}" alt=""></a>
-                        <div class="price">$0.00</div>
+                        {% if not session['username']%}
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
+                        {% else %}
+                        <div class="price"><span style="font-size: 14px; color: gray;">{{session['currency']}}</span> 0.00</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -259,7 +269,11 @@
                             <div class="rating">
                                 <span>{{slip.likes}}</span> Likes
                             </div>
-                            <h5 id="like">{{ slip.price }}</h5>
+                            {% if slip.price == '0.00' %}
+                            <h5 id="like">Free</h5>
+                            {% else %}
+                            <h5 id="like">{{ slip.price }} <span style="font-size: 14px; color: #1d5ab6;">{{ session['currency']}}</span></h5>
+                            {% endif %}
                             <div class="product__color__select" style="font-size: 13px;">
                                 {{slip.odds}} odds
                             </div>

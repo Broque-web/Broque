@@ -22,6 +22,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+    <!--Favicon-->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png')}}">
+    <link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest')}}">
 </head>
 
 <body>
@@ -43,19 +48,24 @@
                 <a href="#">FAQs</a>
             </div>
             <div class="offcanvas__top__hover">
-                <span>Usd <i class="arrow_carrot-down"></i></span>
+                {% if not session['username'] %}
+                <span>USD <i class="arrow_carrot-down"></i></span>
+                {% else %}
+                <span>{{session['currency']}} <i class="arrow_carrot-down"></i></span>
+                {% endif %}
+                
                 <ul>
+                    <li>{{session['currency']}}</li>
                     <li>USD</li>
-                    <li>GHS</li>
-                    <li>NGN</li>
                 </ul>
             </div>
         </div>
         <div class="offcanvas__nav__option">
-            <a href="#" class="search-switch"><img src="{{ url_for('static', filename='images/icon/search.png')}}" alt=""></a>
-            <a href="#"><img src="{{ url_for('static', filename='images/icon/heart.png')}}" alt=""></a>
-            <a href="#"><img src="{{ url_for('static', filename='images/icon/cart.png')}}" alt=""></a>
-            <div class="price">$0.00</div>
+            {% if not session['username']%}
+            <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
+            {% else %}
+            <div class="price"><span style="font-size: 14px; color: gray;">{{session['currency']}}</span> 0.00</div>
+            {% endif %}
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__text">
@@ -85,11 +95,15 @@
                                 <a href="#">FAQs</a>
                             </div>
                             <div class="header__top__hover">
-                                <span>Usd <i class="arrow_carrot-down"></i></span>
+                                {% if not session['username'] %}
+                                <span>USD <i class="arrow_carrot-down"></i></span>
+                                {% else %}
+                                <span>{{session['currency']}} <i class="arrow_carrot-down"></i></span>
+                                {% endif %}
+                                
                                 <ul>
+                                    <li>{{session['currency']}}</li>
                                     <li>USD</li>
-                                    <li>GHS</li>
-                                    <li>NGN</li>
                                 </ul>
                             </div>
                         </div>
@@ -128,10 +142,11 @@
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        <a href="#" class="search-switch"><img src="{{ url_for('static', filename='images/icon/search.png')}}" alt=""></a>
-                        <a href="#"><img src="{{ url_for('static', filename='images/icon/heart.png')}}" alt=""></a>
-                        <a href="#"><img src="{{ url_for('static', filename='images/icon/cart.png')}}" alt=""></a>
-                        <div class="price">$0.00</div>
+                        {% if not session['username']%}
+                        <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
+                        {% else %}
+                        <div class="price"><span style="font-size: 14px; color: gray;">{{session['currency']}}</span> 0.00</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
