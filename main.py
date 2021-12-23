@@ -170,22 +170,26 @@ def generate_ref(size):
 
 #------------------------------------------------------
 #ROUTES
+@app.before_request
+def before_request():
+    expired()
+    if 'currency' in session and 'username'  in session:
+        pass
+    else:
+        session['currency'] = "USD"
 
 @app.route("/")
 def home():
-    expired()
-    home_slips = Slip.query.filter_by(expired="Not expired").all()[0:8]
-    blogs = Blog.query.all()[0:3]
+    home_slips = Slip.query.filter_by(expired="Not expired").all()[0:7]
+    blogs = Blog.query.all()[0:2]
     return render_template("index.html", home_slips=home_slips, blogs=blogs)
 
 @app.route("/about")
 def about():
-    expired()
     return render_template("about.html")
     
 @app.route("/blog-sub", methods=["POST", "GET"])
 def blogSub():
-    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return redirect(url_for("signin"))
@@ -202,7 +206,6 @@ def blogSub():
 
 @app.route("/signup", methods=["POST", "GET"])
 def signup():
-    expired()
     if is_logged_in():
         return redirect(url_for("home"))
     elif request.method == "POST":
@@ -231,7 +234,6 @@ def signup():
 
 @app.route("/signin", methods=["POST", "GET"])
 def signin():
-    expired()
     if is_logged_in():
         return redirect(url_for("home"))
     elif request.method == "POST":
@@ -253,12 +255,10 @@ def signin():
 
 @app.route("/phishing")
 def phishing():
-    expired()
     return render_template("slips.html")
     
 @app.route("/logout")
 def logout():
-    expired()
     delete_session()
     return redirect(url_for("signin"))
 
@@ -266,10 +266,9 @@ def logout():
 
 @app.route("/slips")
 def slips():
-    expired()
     query = request.args.get('query')
     if query is None:
-        slips = Slip.query.filter_by(expired="Not expired").all()[0:12]
+        slips = Slip.query.filter_by(expired="Not expired").all()[0:11]
     else:
         i = int(query) * 12
         x = (int(query) + 1) * 2
@@ -279,14 +278,12 @@ def slips():
 
 @app.route('/dashboard')
 def cart():
-    expired()
     return render_template('dashboard.html')
 
 
 
 @app.route("/submission", methods=["POST", "GET"])
 def submission():
-    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return redirect(url_for("signin"))
@@ -314,7 +311,6 @@ def submission():
 
 @app.route("/detail",  methods=["POST", "GET"])
 def detail():
-    expired()
     ref = request.args.get('ref')
     if not is_logged_in():
         flash("Please login first", "danger")
@@ -329,12 +325,11 @@ def detail():
     owner = User.query.filter_by(id=slip.slip_owner).first()
     name = owner.firstname + " " + owner.lastname
     comments = SlipComment.query.filter_by(slip_id=slip.id)
-    addt_slips = Slip.query.filter_by(expired="Not expired").all()[0:4]
+    addt_slips = Slip.query.filter_by(expired="Not expired").all()[0:3]
     return render_template("slip-detail.html", slip=slip, name=name, comments=comments, noc=len(comments.all()), addt_slips=addt_slips)
 
 @app.route("/blog-detail",  methods=["POST", "GET"])
 def blogDetail():
-    expired()
     ref = request.args.get('ref')
     if ref == None:
         return redirect(url_for("home"))
@@ -348,7 +343,6 @@ def blogDetail():
 
 @app.route('/getcomments',  methods=["GET"])
 def getComments():
-    expired()
     jsons = {'comments':[]}
     ref = request.args.get("ref")
     id = Slip.query.filter_by(slip_ref=ref).first().id
@@ -368,7 +362,6 @@ def getComments():
 
 @app.route("/addcomments", methods=["POST"])
 def addCommentS():
-    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return make_response(jsonify({'url': url_for('signin')}), 201)
@@ -390,7 +383,6 @@ def addCommentS():
 
 @app.route("/addlike", methods=["POST"])
 def addLikes():
-    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return make_response(jsonify({'url': url_for('signin')}), 201)
@@ -419,7 +411,6 @@ def addLikes():
 
 @app.route("/settings")
 def settings():
-    expired()
     if not is_logged_in():
         flash("Please login first", "danger")
         return redirect(url_for("signin"))
@@ -428,4 +419,4 @@ def settings():
 #---------------------------------------------------
 #RUNNING APP
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
