@@ -124,10 +124,10 @@ def expired():
     db.session.commit()
 
 def get_currency(country):
-    with open("static/src/c_code.json") as f:
+    with open("/static/src/c_code.json") as f:
         c_code = json.load(f)
 
-    with open("static/src/c_udt.json") as f:
+    with open("/static/src/c_udt.json") as f:
         c_udt = json.load(f)
 
     code = ""
