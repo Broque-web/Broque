@@ -124,10 +124,11 @@ def expired():
     db.session.commit()
 
 def get_currency(country):
-    with open("/static/src/c_code.json") as f:
+    THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(THIS_FOLDER, "static/src/c_code.json")) as f:
         c_code = json.load(f)
 
-    with open("/static/src/c_udt.json") as f:
+    with open(os.path.join(THIS_FOLDER, "static/src/c_udt.json")) as f:
         c_udt = json.load(f)
 
     code = ""
