@@ -117,7 +117,7 @@ def expired():
         time = i_time-f_time
         if str(time).startswith("-"):
             slip.expired = "Expired"
-        elif int(str(time).split(":")[1]) <= 5:
+        elif int(str(time).split(":")[0]) == 0 and int(str(time).split(":")[1]) <= 5:
             slip.expired = "Expired"
         else:
             slip.expired = "Not expired"
@@ -419,4 +419,4 @@ def settings():
 #---------------------------------------------------
 #RUNNING APP
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
