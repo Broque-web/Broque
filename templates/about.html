@@ -68,7 +68,8 @@
             {% if not session['username']%}
             <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
             {% else %}
-            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+            <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
             {% endif %}
         </div>
         <div id="mobile-menu-wrap"></div>
@@ -135,11 +136,10 @@
                             {% if session['username']%}
                             <li><a href="#">Account</a>
                                 <ul class="dropdown">
-                                    <li><a href="/submission">Share Slips</a></li>
+                                    <li><a href="/submission">Share a Slip</a></li>
                                     <li><a href="/dashboard">Purchases</a></li>
                                     <li><a href="/blog-sub">Share Blog Post</a></li>
-                                    <li><a href="#">SMS Bomber</a></li>
-                                    <li><a href="#">Email Bomber</a></li>
+                                    <li><a href="/referral">Referral</a></li>
                                     <li><a href="/settings">Settings</a></li>
                                 </ul>
                             </li>
@@ -153,7 +153,8 @@
                         {% if not session['username']%}
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
                         {% else %}
-                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+                        <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
                         {% endif %}
                     </div>
                 </div>
@@ -200,13 +201,13 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6">
                     <div class="about__item">
-                        <h4>What We Do ?</h4>
+                        <h4>What We Do?</h4>
                         <p>Broque.com provides services for users, allowing them to sell bet slips, either for free or  for a fee. This is a convinience form of selling and buying bet slips.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6">
                     <div class="about__item">
-                        <h4>Why Choose Us</h4>
+                        <h4>Why Choose Us?</h4>
                         <p>We provide services where there is a scam free, selling and buying of betslips, there is always a refund when shared games dont play.</p>
                     </div>
                 </div>
@@ -250,7 +251,7 @@
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="counter__item">
                         <div class="counter__item__number">
-                            <h2 class="cn_num">102</h2>
+                            <h2 class="cn_num">{{users}}</h2>
                         </div>
                         <span>Our <br />Users</span>
                     </div>
@@ -258,7 +259,7 @@
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="counter__item">
                         <div class="counter__item__number">
-                            <h2 class="cn_num">30</h2>
+                            <h2 class="cn_num">{{slips}}</h2>
                         </div>
                         <span>Total <br />BetSlips</span>
                     </div>
@@ -297,18 +298,26 @@
                 </div>
             </div>
             <div class="row">
+                
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="team__item">
                         <img src="{{ url_for('static', filename='images/about/anonymous.png') }}" alt="">
-                        <h4>Mohammed Seidu</h4>
-                        <span>Website Designer</span>
+                        <h4>Dollar Gad</h4>
+                        <span>Chief Executive Officer</span>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="team__item">
                         <img src="{{ url_for('static', filename='images/about/anonymous.png') }}" alt="">
-                        <h4>Dollar Gad</h4>
-                        <span>C.E.O</span>
+                        <h4>Mohammed Seidu</h4>
+                        <span>Lead Developer</span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="team__item">
+                        <img src="{{ url_for('static', filename='images/about/anonymous.png') }}" alt="">
+                        <h4>Aneva Bright</h4>
+                        <span>Assistant Developer</span>
                     </div>
                 </div>
             </div>
@@ -398,7 +407,7 @@
                                 document.write(new Date().getFullYear());
                             </script>
                             All rights reserved | Made with <i class="fa fa-heart-o"
-                            aria-hidden="true"></i> from <a href="#">Broque.com</a>
+                            aria-hidden="true"></i> from <a href="/">Broque.com</a>
                         </p>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </div>

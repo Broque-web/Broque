@@ -69,7 +69,8 @@
             {% if not session['username']%}
             <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
             {% else %}
-            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+            <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
             {% endif %}
         </div>
         <div id="mobile-menu-wrap"></div>
@@ -136,11 +137,10 @@
                             {% if session['username']%}
                             <li><a href="#">Account</a>
                                 <ul class="dropdown">
-                                    <li><a href="/submission">Share Slips</a></li>
+                                    <li><a href="/submission">Share a Slip</a></li>
                                     <li><a href="/dashboard">Purchases</a></li>
                                     <li><a href="/blog-sub">Share Blog Post</a></li>
-                                    <li><a href="#">SMS Bomber</a></li>
-                                    <li><a href="#">Email Bomber</a></li>
+                                    <li><a href="/referral">Referral</a></li>
                                     <li><a href="/settings">Settings</a></li>
                                 </ul>
                             </li>
@@ -154,7 +154,8 @@
                         {% if not session['username']%}
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
                         {% else %}
-                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+                        <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
                         {% endif %}
                     </div>
                 </div>
@@ -234,8 +235,8 @@
                                             <div class="shop__product__option__right">
                                                 <select name="gender">
                                                     <option value="Male">Male</option>
-                                                    <option value="Femle">Female</option>
-                                                    <option value="Hidden">I prefer not to say</option>
+                                                    <option value="Female">Female</option>
+                                                    <option value="I prefer not to say">I prefer not to say</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -327,7 +328,7 @@
                                 document.write(new Date().getFullYear());
                             </script>
                             All rights reserved | Made with <i class="fa fa-heart-o"
-                            aria-hidden="true"></i> from <a href="#" >Broque.com</a>
+                            aria-hidden="true"></i> from <a href="/" >Broque.com</a>
                         </p>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </div>

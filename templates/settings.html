@@ -20,9 +20,17 @@
     <div id="preloder">
         <div class="loader"></div>
     </div>
-
+    
 <div class="container light-style flex-grow-1 container-p-y">
-  <form>
+  {% for category, message in get_flashed_messages(with_categories=True)%}
+    <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+        <strong>{{message}}</strong>
+        <button class="close" type="button" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+  <form method="post" enctype="multipart/form-data">
     <h4 class="font-weight-bold py-3 mb-4">
       Account settings
     </h4>
@@ -43,11 +51,11 @@
             <div class="tab-pane fade active show" id="account-general">
               
               <div class="card-body media align-items-center">
-                <img src="{{ url_for('static', filename='images/profiles/'+profile.image)}}" alt="" class="d-block ui-w-80">
+                <img src="{{ url_for('static', filename='images/profiles/'+profile.image)}}" alt="" class="d-block ui-w-80" style="border-radius: 50%; overflow: hidden;">
                 <div class="media-body ml-4">
                   <label class="btn btn-outline-primary">
                     Upload new photo
-                    <input type="file" class="account-settings-fileinput">
+                    <input type="file" class="account-settings-fileinput" name="image">
                   </label> &nbsp;
                   <button type="button" class="btn btn-default md-btn-flat">Reset</button>
 
@@ -59,19 +67,19 @@
               <div class="card-body">
                 <div class="form-group">
                   <label class="form-label">Username</label>
-                  <input  name="username" type="text" class="form-control mb-1" value="{{profile.username}}">
+                  <input  name="username" type="text" class="form-control mb-1" value="{{profile.username}}" readonly>
                 </div>
                 <div class="form-group">
                   <label class="form-label">First Name</label>
-                  <input type="text" class="form-control" value="{{profile.firstname}}">
+                  <input type="text" class="form-control" value="{{profile.firstname}}" name="firstname">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Last Name</label>
-                  <input type="text" class="form-control" value="{{profile.lastname}}">
+                  <input type="text" class="form-control" value="{{profile.lastname}}" name="lastname">
                 </div>
                 <div class="form-group">
                   <label class="form-label">E-mail</label>
-                  <input type="text" class="form-control mb-1">
+                  <input type="text" class="form-control mb-1" value="{{profile.email}}" placeholder="Enter your email" name="email">
                   <div class="alert alert-warning mt-3">
                     Your email is not confirmed. Please check your inbox.<br>
                     <a href="javascript:void(0)">Resend confirmation</a>
@@ -85,17 +93,17 @@
 
                 <div class="form-group">
                   <label class="form-label">Current password</label>
-                  <input type="password" class="form-control">
+                  <input type="password" class="form-control" name="password" value="">
                 </div>
 
                 <div class="form-group">
                   <label class="form-label">New password</label>
-                  <input type="password" class="form-control">
+                  <input type="password" class="form-control" name="new_password" value="">
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">Repeat new password</label>
-                  <input type="password" class="form-control">
+                  <label class="form-label">Verify new password</label>
+                  <input type="password" class="form-control" name="verify_new_password" value="">
                 </div>
 
               </div>
@@ -105,11 +113,11 @@
 
                 <div class="form-group">
                   <label class="form-label">Bio</label>
-                  <textarea class="form-control" rows="5"></textarea>
+                  <textarea class="form-control" rows="5"  name="bio" style="resize: none;">{{profile.bio}}</textarea>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Birthday</label>
-                  <input type="date" class="form-control" >
+                  <input type="date" class="form-control" name="birthdate" value="{{profile.DOB}}">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Country</label>
@@ -137,7 +145,7 @@
 
                 <div class="form-group">
                   <label class="form-label">Phone</label>
-                  <input type="text" class="form-control">
+                  <input type="text" class="form-control" name="phone" value="{{profile.phone}}">
                 </div>
 
               </div>
@@ -263,7 +271,7 @@ body{
 
 .ui-w-80 {
     width: 80px !important;
-    height: auto;
+    height: 80px;
 }
 
 .btn-default {

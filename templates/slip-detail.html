@@ -67,7 +67,8 @@
             {% if not session['username']%}
             <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
             {% else %}
-            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+            <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
             {% endif %}
         </div>
         <div id="mobile-menu-wrap"></div>
@@ -133,11 +134,10 @@
                             {% if session['username']%}
                             <li><a href="#">Account</a>
                                 <ul class="dropdown">
-                                    <li><a href="/submission">Share Slips</a></li>
+                                    <li><a href="/submission">Share a Slip</a></li>
                                     <li><a href="/dashboard">Purchases</a></li>
                                     <li><a href="/blog-sub">Share Blog Post</a></li>
-                                    <li><a href="#">SMS Bomber</a></li>
-                                    <li><a href="#">Email Bomber</a></li>
+                                    <li><a href="/referral">Referral</a></li>
                                     <li><a href="/settings">Settings</a></li>
                                 </ul>
                             </li>
@@ -151,7 +151,8 @@
                         {% if not session['username']%}
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
                         {% else %}
-                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+                        <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
                         {% endif %}
                     </div>
                 </div>
@@ -168,9 +169,8 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="product__details__breadcrumb">
-                            <a href="./index.html">Home</a>
-                            <a href="./shop.html">Shop</a>
-                            <span>Product Details</span>
+                            <a href="/">Home</a>
+                            <span>slip Details</span>
                         </div>
                     </div>
                 </div>
@@ -215,13 +215,11 @@
                                 </div>
                             </div>
                             <div class="product__details__cart__option">
-                                <a href="#" class="primary-btn">Preview Sliphyt
-
-                                </a>
+                                <a href="javascript:void(0)" class="primary-btn" data-toggle="modal" data-target="#modalGM">Preview Slip</a>
                             </div>
                             <div class="product__details__btns__option">
                                 <a><i class="fa fa-link"></i> Open slip in</a>
-                                <a href="{{slip.bkl}}"><i class="fa fa-arrow-right"></i> {{slip.bookmaker}}</a>
+                                <a href="{{slip.bkl}}" target="_blank"><i class="fa fa-arrow-right"></i> {{slip.bookmaker}}</a>
                             </div>
                             <div class="product__details__last__option">
                                 <h5><span>Guaranteed Safe Checkout</span></h5>
@@ -411,7 +409,7 @@
                                 document.write(new Date().getFullYear());
                             </script>
                             All rights reserved | Made with <i class="fa fa-heart-o"
-                            aria-hidden="true"></i> from <a href="#" target="#">Broque.com</a>
+                            aria-hidden="true"></i> from <a href="/" target="#">Broque.com</a>
                         </p>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </div>
@@ -431,7 +429,45 @@
         </div>
     </div>
     <!-- Search End -->
-
+    <div class="text-center">
+      
+      </div>      
+      <!--Modal: Name-->
+      <div class="modal fade" id="modalGM" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+      
+          <!--Content-->
+          <div class="modal-content">
+      
+            <!--Body-->
+            <div class="modal-body mb-0 p-0">
+      
+              <!--Google map-->
+              <div id="map-container-google-2" class="z-depth-1-half map-container" style="height: 65vh; overflow-y: scroll; display: grid; justify-content: center; padding-top: 20px;"  >
+                <img src="{{ url_for('static', filename='images/slip_images/'+slip.image)}}" alt="" >
+                <!-- <iframe src="{{slip.bkl}}" frameborder="0"
+                  style="border:0; width:100%; height: 100%;" allowfullscreen></iframe> -->
+              </div>
+      
+              <!--Google Maps-->
+      
+            </div>
+      
+            <!--Footer-->
+            <div class="modal-footer justify-content-center">
+      
+              <button type="button" class="btn btn-primary btn-md" onclick="window.open('{{slip.bkl}}')">Open in {{slip.bookmaker}}<i class="fa fa-map-marker-alt ml-1"></i></button>
+              <button type="button" class="btn btn-outline-primary btn-md" data-dismiss="modal" >Close <i class="fa fa-times"></i></button>
+      
+            </div>
+      
+          </div>
+          <!--/.Content-->
+      
+        </div>
+      </div>
+    </style>
+    <!--IFrame-->
     <!-- Js Plugins -->
     <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
@@ -444,6 +480,12 @@
     <script src="{{ url_for('static', filename='js/owl.carousel.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/main.js')}}"></script>
     <script>
+    function show_i(){
+        iif = document.getElementById("iiif").style.transform = "scale(1)"
+    }
+    function hide_i(){
+        iif = document.getElementById("iiif").style.transform = "scale(0)"
+    }
     function  getMessages(){
         var cont = document.getElementById("comments")
         var coms = document.getElementById("coms")

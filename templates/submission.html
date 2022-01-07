@@ -8,7 +8,7 @@
     <meta name="keywords" content="Broque, logs, Broque.com, scam">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Broque.com | Submission</title>
+    <title>Broque.com | Add a slip</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
@@ -69,7 +69,8 @@
             {% if not session['username']%}
             <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
             {% else %}
-            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+            <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
             {% endif %}
         </div>
         <div id="mobile-menu-wrap"></div>
@@ -135,11 +136,10 @@
                             {% if session['username']%}
                             <li class="active"><a href="#">Account</a>
                                 <ul class="dropdown">
-                                    <li><a href="/submission">Share Slips</a></li>
+                                    <li><a href="/submission">Share a Slip</a></li>
                                     <li><a href="/dashboard">Purchases</a></li>
                                     <li><a href="/blog-sub">Share Blog Post</a></li>
-                                    <li><a href="#">SMS Bomber</a></li>
-                                    <li><a href="#">Email Bomber</a></li>
+                                    <li><a href="/referral">Referral</a></li>
                                     <li><a href="/settings">Settings</a></li>
                                 </ul>
                             </li>
@@ -153,7 +153,8 @@
                         {% if not session['username']%}
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
                         {% else %}
-                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+                        <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
                         {% endif %}
                     </div>
                 </div>
@@ -171,8 +172,7 @@
                     <div class="breadcrumb__text">
                         <h4>Add a slip</h4>
                         <div class="breadcrumb__links">
-                            <a href="./index.html">Home</a>
-                            <a href="./shop.html">Shop</a>
+                            <a href="/">Home</a>
                             <span>Add a slip</span>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
     <section class="checkout spad">
         <div class="container">
             <div class="checkout__form">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
                             {% for category, message in get_flashed_messages(with_categories=True)%}
@@ -208,11 +208,24 @@
                             </div>
                             <div class="checkout__input">
                                 <p>Odds<span>*</span></p>
-                                <input type="text" name="odds" placeholder="Odds"required>
+                                <input type="text" name="odds" placeholder="Odds" required>
                             </div>
                             <div class="checkout__input">
                                 <p>Slip starts at<span>*</span></p>
                                 <input type="time" name="time" required>
+                            </div>
+                            <div class="checkout__input">
+                                <p>Add slip image<span>*</span></p>
+                                <div class="form-group">
+                                
+                                    <div class="input-group">
+                                        <input type="file" name="image" style="display: none;" id="file-upload" required>
+                                        <input type="text" class="form-control" readonly id="viewer" required>
+                                        <span class="input-group-btn">
+                                            <label for="file-upload" class="btn btn-primary" style="padding: 12px;">Browse</label>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6">
@@ -223,7 +236,7 @@
                                 </div>
                                 <div class="container w-50" style="margin-top: 5.3%;">
                                     <select class="form-select w-100" aria-label="Select a Bookmaker" name="bookmaker">
-                                        <option selected disabled hidden>Select a Bookmaker</option>
+                                        <option selected hidden value="SportyBet">Select a Bookmaker</option>
                                         <option value="SportyBet">SportyBet</option>
                                         <option value="1xBet">1xBet</option>
                                         <option value="Betway">Betway</option>
@@ -252,10 +265,11 @@
                             <div class="checkout__order">
                                 <h4 class="order__title">Agreement</h4>
                                 <div class="checkout__order__products">
-                                    The slip  you are submitting is currently free and  will be accessible to anyone who uses Broque.com 
+                                    The slip you are submitting is currently free and  will be accessible to anyone who uses Broque.com. Please make sure that the details of the slip you are providing is accurate and precise. 
+                                    <p>Make sure that the matches in the slip is played on the same day you are submitting the slip. i.e <script>document.write(new Date().toDateString());</script></p>
                                 </div>
                                 
-                                <p>Slip will be void 5 minutes to the starting time.</p>
+                                <p>Slip will be void a minute to the starting time provided, which is the starting timeof the first match to play.</p>
                                 <div class="checkout__input__checkbox">
                                     <label for="acc-or">
                                         Accept all Agreements
@@ -263,7 +277,7 @@
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
-                                <button type="submit" class="site-btn">Add Item</button>
+                                <button type="submit" class="site-btn">Submit Slip</button>
                             </div>
                         </div>
                     </div>
@@ -329,7 +343,7 @@
                                 document.write(new Date().getFullYear());
                             </script>
                             All rights reserved | Made with <i class="fa fa-heart-o"
-                            aria-hidden="true"></i> from <a href="#" >Broque.com</a>
+                            aria-hidden="true"></i> from <a href="/" >Broque.com</a>
                         </p>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </div>
@@ -349,7 +363,20 @@
         </div>
     </div>
     <!-- Search End -->
+    <script>
+        var input = document.getElementById("file-upload");
 
+        input.addEventListener('change', showFileName);
+
+        function showFileName(event){
+            var viewer = document.getElementById("viewer");
+            var input = event.srcElement;
+            var fileName = input.files[0].name;
+
+            viewer.value = fileName;
+
+        }
+    </script>
     <!-- Js Plugins -->
     <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
