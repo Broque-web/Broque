@@ -1,6 +1,7 @@
 # ------------------------------------------------------
 # MODULES IMPORTS
 from re import X
+import re
 import string
 import random
 import os
@@ -18,6 +19,7 @@ from werkzeug.datastructures import Headers
 from werkzeug.utils import secure_filename
 from flask_cors import CORS, cross_origin
 from static.src.Currency_converter.pycurrency import Currency_Converter
+from flask_mail import Mail, Message
 
 # ------------------------------------------------------
 # NECESSARY CONFIGURATIONS
@@ -26,9 +28,16 @@ app.config["SECRET_KEY"] = "b423653a944928b2e59984be767eefa5"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///broke.db"
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config["UPLOAD_FOLDER"] = "static/images/slip_images/"
+app.config["MAIL_SERVER"] = "smtp.googlemail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = "tonygh2019@gmail.com"
+app.config["MAIL_PASSWORD"] = "tony6660"
+
 allowed_extensions = {'jpg', 'png', 'jpeg'}
 db = SQLAlchemy(app)
 CORS(app)
+mail = Mail(app)
 session_cookie = SecureCookieSessionInterface().get_signing_serializer(app)
 
 
@@ -45,7 +54,7 @@ class User(db.Model):
     gender = db.Column(db.String())
     referral_ref = db.Column(db.String())
     balance = db.Column(db.Float)
-    verified = db.Column(db.String(3), nullable=False, default="no")
+    is_verified = db.Column(db.Boolean, default=False)
     image = db.Column(db.String(20), nullable=False, default="default.png")
     email = db.Column(db.String(), default="")
     bio = db.Column(db.String(), default="")
@@ -100,6 +109,11 @@ class SlipLikes(db.Model):
     slip_id = db.Column(db.Integer)
     like = db.Column(db.Integer)
 
+class email_tokens(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    token = db.Column(db.String(20))
+    is_used = db.Column(db.Boolean, default=False)
 
 # ------------------------------------------------------
 # OTHER CONFIGURATIONS
@@ -240,7 +254,7 @@ def home():
 @app.route("/referral")
 def referral():
     if not is_logged_in():
-        flash("Please login first", "danger")
+        flash("Please login first", "warning")
         session['redirect'] = request.url
         return redirect(url_for("signin"))
     user = User.query.filter_by(username=session['username']).first()
@@ -262,7 +276,7 @@ def about():
 @app.route("/blog-sub", methods=["POST", "GET"])
 def blogSub():
     if not is_logged_in():
-        flash("Please login first", "danger")
+        flash("Please login first", "warning")
         session['redirect'] = request.url
         return redirect(url_for("signin"))
     elif request.method == "POST":
@@ -294,9 +308,9 @@ def signup():
         referral_ref = generate_ref(12)
         user = User.query.filter_by(username=username).all()
         if user != []:
-            flash("Username already exist", "danger")
+            flash("Username already exist", "warning")
         elif password != v_password:
-            flash("Passwords do not match", "danger")
+            flash("Passwords do not match", "warning")
         else:
             if 'ref' in session:
                 User.query.filter_by(referral_ref=session['ref']).first(
@@ -320,9 +334,9 @@ def signin():
         password = hash(request.form["password"])
         user = User.query.filter_by(username=username).first()
         if user == None:
-            flash("Username does not exist", "danger")
+            flash("Username does not exist", "warning")
         elif password != user.password:
-            flash("Incorrerct password", "danger")
+            flash("Incorrerct password", "warning")
         elif username == "" or password == "":
             flash("No field should be left blank")
         else:
@@ -335,11 +349,6 @@ def signin():
             return redirect(url_for("home"))
         return render_template("signin.html")
     return render_template("signin.html")
-
-
-@app.route("/phishing")
-def phishing():
-    return render_template("slips.html")
 
 
 @app.route("/logout")
@@ -368,7 +377,7 @@ def cart():
 @app.route("/submission", methods=["POST", "GET"])
 def submission():
     if not is_logged_in():
-        flash("Please login first", "danger")
+        flash("Please login first", "warning")
         session['redirect'] = request.url
         return redirect(url_for("signin"))
     elif request.method == "POST":
@@ -387,10 +396,10 @@ def submission():
         es = Slip.query.filter_by(code=code).first()
         link = generate_link(bookmaker, code)
         if es is not None:
-            flash("Oops! Bet code already exists", "danger")
+            flash("Oops! Bet code already exists", "warning")
             return redirect(url_for("submission"))
         elif (image and allowed_file(image.filename)) == False:
-            flash("Oops! File type not supported.", "danger")
+            flash("Oops! File type not supported.", "warning")
             return redirect(url_for("submission"))
         filename = secure_filename(
             bookmaker.lower()+"_"+generate_ref(6)+".png")
@@ -407,7 +416,7 @@ def submission():
 def detail():
     ref = request.args.get('ref')
     if not is_logged_in():
-        flash("Please login first", "danger")
+        flash("Please login first", "warning")
         session['redirect'] = request.url
         return redirect(url_for("signin"))
     elif ref == None:
@@ -460,7 +469,7 @@ def getComments():
 def addCommentS():
     req = request.get_json()
     if not is_logged_in():
-        flash("Please login first", "danger")
+        flash("Please login first", "warning")
         session['redirect'] = "http://127.0.0.1:5000/detail?ref="+req['ref']
         return make_response(jsonify({'url': url_for('signin')}), 201)
     else:
@@ -483,7 +492,7 @@ def addCommentS():
 def addLikes():
     req = request.get_json()
     if not is_logged_in():
-        flash("Please login first", "danger")
+        flash("Please login first", "warning")
         session['redirect'] = "http://127.0.0.1:5000/detail?ref="+req['ref']
         return make_response(jsonify({'url': url_for('signin')}), 201)
     else:
@@ -513,7 +522,7 @@ def addLikes():
 def settings():
     message = ""
     if not is_logged_in():
-        flash("Please login first", "danger")
+        flash("Please login first", "warning")
         session['redirect'] = request.url
         return redirect(url_for("signin"))
     elif request.method == "POST":
@@ -537,7 +546,7 @@ def settings():
         if image.filename == '':
             pass
         elif (image and allowed_file(image.filename)) == False:
-            flash("File type not supported.", "danger")
+            flash("File type not supported.", "warning")
             return redirect(url_for("settings"))
         else:
             filename = secure_filename(user.username.lower(
@@ -571,10 +580,55 @@ def settings():
 
     db.session.commit()
     if message != '':
-        flash(message, "danger")
+        flash(message, "warning")
     profile = User.query.filter_by(username=session['username']).first()
     return render_template("settings.html", profile=profile)
 
+@app.route("/send-email")
+def send_email():
+    if not is_logged_in():
+        flash("Please login first", "warning")
+        session['redirect'] = request.url
+        return redirect(url_for("signin"))
+    user = User.query.filter_by(
+                username=session['username']).first()
+    if user.email == "":
+        flash("You have not added an email to your account yet, please add one and try again", "warning")
+        return redirect(url_for("settings"))
+    else:
+        new_token = email_tokens(user_id=user.id, token=generate_ref(20))
+        db.session.add(new_token)
+        db.session.commit()
+        msg = Message("Broque.com email confirmation", 
+        sender=("Broque.com", "noreply@broque.com"), 
+        recipients=[user.email])
+        msg.html = render_template("email_confirmation.html", token=new_token)
+        try:
+            mail.send(msg)
+            flash(f"A confirmation email has been sent to {user.email}. Open and follow the instructions given", "success")
+            return redirect(url_for("settings"))
+        except Exception as e:
+            print(e)
+            flash(f"There was an error sending email to {user.email}", "warning")
+            return redirect(url_for("settings"))
+    
+
+@app.route("/email-confirm/<token>", methods=['POST', 'GET'])
+def email_confirm(token):
+    tokens = email_tokens.query.filter_by(token=token).first()
+    
+    if not tokens or tokens.is_used:
+        return redirect(url_for("home"))
+    else:
+        user = User.query.filter_by(
+                id=tokens.user_id).first()
+        user.is_verified = True
+        tokens.is_used = True
+        db.session.commit()
+        delete_session()
+        flash("Your email has been confirmed. Please sign in.", "success")
+        return redirect(url_for("signin"))
+        
 
 # ---------------------------------------------------
 # RUNNING APP
