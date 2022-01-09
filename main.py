@@ -403,7 +403,7 @@ def submission():
             return redirect(url_for("submission"))
         filename = secure_filename(
             bookmaker.lower()+"_"+generate_ref(6)+".png")
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        image.save(os.path.join(os.path.dirname(os.path.abspath(__file__)) ,app.config['UPLOAD_FOLDER']+filename))
         new_slip = Slip(image=filename, bkl=link, code=code, odds=odds, time=time, bookmaker=bookmaker,
                         price=price, description=description, slip_ref=slip_ref, slip_owner=id, matches=matches)
         db.session.add(new_slip)
@@ -536,13 +536,21 @@ def settings():
         user = User.query.filter_by(username=session['username']).first()
         user.firstname = firstname
         user.lastname = lastname
-        user.email = email
         user.DOB = birthdate
         user.phone = phone
         user.bio = bio
-
         image = request.files['image']
 
+        if email != "":
+            emails = User.query.filter_by(email=email).first()
+            if emails:
+                if emails.id == user.id:
+                    user.email = email
+                else:
+                    flash("Email has already been used by another account. Try a new one.", "warning")
+                    return redirect(url_for("settings"))
+            else:
+                 user.email = email
         if image.filename == '':
             pass
         elif (image and allowed_file(image.filename)) == False:
@@ -551,7 +559,7 @@ def settings():
         else:
             filename = secure_filename(user.username.lower(
             )+"_"+generate_ref(20)+"."+image.filename.split(".")[-1].lower())
-            image.save(os.path.join("static/images/profiles/", filename))
+            image.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),"static/images/profiles/"+filename))
             user.image = filename
 
         password = request.form['password']
@@ -596,13 +604,14 @@ def send_email():
         flash("You have not added an email to your account yet, please add one and try again", "warning")
         return redirect(url_for("settings"))
     else:
-        new_token = email_tokens(user_id=user.id, token=generate_ref(20))
+        token = generate_ref(20)
+        new_token = email_tokens(user_id=user.id, token=token)
         db.session.add(new_token)
         db.session.commit()
         msg = Message("Broque.com email confirmation", 
         sender=("Broque.com", "noreply@broque.com"), 
         recipients=[user.email])
-        msg.html = render_template("email_confirmation.html", token=new_token)
+        msg.html = render_template("email_confirmation.html", token=token)
         try:
             mail.send(msg)
             flash(f"A confirmation email has been sent to {user.email}. Open and follow the instructions given", "success")
@@ -618,10 +627,15 @@ def email_confirm(token):
     tokens = email_tokens.query.filter_by(token=token).first()
     
     if not tokens or tokens.is_used:
-        return redirect(url_for("home"))
+        delete_session()
+        flash("There was an error confirming your email. Please sign in and try again.", "danger")
+        return redirect(url_for("signin"))
     else:
         user = User.query.filter_by(
                 id=tokens.user_id).first()
+        if user.is_verified:
+            flash("Your email has already been verified. Please sign in.", "success")
+            return redirect(url_for("signin"))
         user.is_verified = True
         tokens.is_used = True
         db.session.commit()

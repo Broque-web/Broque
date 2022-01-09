@@ -147,12 +147,12 @@
             <tr>
               <td align="center" valign="top" style="padding: 36px 24px">
                 <a
-                  href="{{url_for('home')}}"
+                  href="https://broque.pythonanywhere.com/"
                   target="_blank"
                   style="display: inline-block"
                 >
                   <img
-                    src="{{ url_for('static', filename='images/logo.jpg') }}"
+                    src="https://broque.pythonanywhere.com/static/images/profiles/default.png"
                     alt="Logo"
                     border="0"
                     width="48"
@@ -254,7 +254,7 @@
                 <p style="margin: 0">
                   Tap the button below to confirm your email address. If you
                   didn't request an account confirmation with
-                  <a href="{{url_for('home')}}">Broque.com</a>, you can safely
+                  <a href="https://broque.pythonanywhere.com/">Broque.com</a>, you can safely
                   delete this email.
                 </p>
               </td>
@@ -275,7 +275,7 @@
                             style="border-radius: 6px"
                           >
                             <a
-                              href="{{url_for('email_confirm', token=token)}}"
+                              href="https://broque.pythonanywhere.com/email_confirm/{{token}}"
                               target="_blank"
                               style="
                                 display: inline-block;
@@ -315,7 +315,7 @@
                 </p>
                 <p style="margin: 0">
                   <a
-                    href="{{url_for('email_confirm', token=token)}}"
+                    href="https://broque.pythonanywhere.com/email_confirm/{{token}}"
                     target="_blank"
                   ></a>
                 </p>
