@@ -77,17 +77,18 @@
                   <label class="form-label">Last Name</label>
                   <input type="text" class="form-control" value="{{profile.lastname}}" name="lastname">
                 </div>
-                {% if profile.is_verified %}
-                {% else %}
+                
                 <div class="form-group">
                   <label class="form-label">E-mail</label>
                   <input type="text" class="form-control mb-1" value="{{profile.email}}" placeholder="Enter your email" name="email">
+                  {% if profile.is_verified %}
+                  {% else %}
                   <div class="alert alert-warning mt-3">
                     Your email is not confirmed. Please check your inbox.<br>
                     <a href="/send-email">Resend confirmation</a>
                   </div>
+                  {% endif %}
                 </div>
-                {% endif %}
               </div>
 
             </div>

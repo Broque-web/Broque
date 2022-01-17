@@ -131,20 +131,20 @@
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li><a href="/">Home</a></li>
+                            <li class="active"><a href="/">Home</a></li>
                             <li><a href="/slips">Slips</a></li>
-                            <li><a href="#">Blog</a></li>
                             {% if session['username']%}
-                            <li class="active"><a href="#">Account</a>
+                            <li><a href="#">Account</a>
                                 <ul class="dropdown">
                                     <li><a href="/submission">Share a Slip</a></li>
-                                    <li><a href="/dashboard">Purchases</a></li>
+                                    <li><a href="/todays-predictions">Predictions</a></li>
                                     <li><a href="/blog-sub">Share Blog Post</a></li>
                                     <li><a href="/referral">Referral</a></li>
                                     <li><a href="/settings">Settings</a></li>
                                 </ul>
                             </li>
                             {% endif %}
+                            <li><a href="/livescore">livescore</a></li>
                             <li><a href="/about">About</a></li>
                         </ul>
                     </nav>

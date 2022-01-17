@@ -20,6 +20,8 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS, cross_origin
 from static.src.Currency_converter.pycurrency import Currency_Converter
 from flask_mail import Mail, Message
+from bs4 import BeautifulSoup
+import requests
 
 # ------------------------------------------------------
 # NECESSARY CONFIGURATIONS
@@ -178,7 +180,38 @@ def expired():
             slip.expired = "Not expired"
     db.session.commit()
 
+def Predictor():
+    flag = True
+    fore_bet = "https://www.forebet.com/en/football-tips-and-predictions-for-today"
+    try:
+        fore_bet_html = requests.get(fore_bet).text
+        soup = BeautifulSoup(fore_bet_html, "html.parser")
+        elements = soup.find_all("div", class_="rcnt")
+    except:
+        flag = False
 
+    predictions = []
+    if flag:
+        for element in elements:
+            try:
+                prb = element.find("div", class_="fprc").find_all("span")
+                predictions.append({
+                "league_flag": element.find("img", class_="flsc").get("src"),
+                "league_name": element.find("img", class_="flsc").get("onclick")[8:-1].split(",")[2].strip("'") + " "+ element.find("img", class_="flsc").get("onclick")[8:-1].split(",")[3].strip("'"),
+                "home_team": element.find("span", class_="homeTeam").find("span").text,
+                "away_team": element.find("span", class_="awayTeam").find("span").text,
+                "date_time": element.find("span", class_="date_bah").text,
+                "home_prb": prb[0].text,
+                "draw_prb": prb[1].text,
+                "away_prb": prb[2].text,
+                "home_score": element.find("div", class_="ex_sc tabonly").text.split(" ")[0],
+                "away_score":element.find("div", class_="ex_sc tabonly").text.split(" ")[2],
+                "time_played":element.find("span", class_="l_min").text,
+
+            })
+            except:
+                pass
+    return predictions
 def get_currency(country):
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
     with open(os.path.join(THIS_FOLDER, "static/src/c_code.json")) as f:
@@ -369,10 +402,13 @@ def slips():
     return render_template("slips.html", slips=slips)
 
 
-@app.route('/dashboard')
+@app.route('/todays-predictions')
 def cart():
-    return render_template('dashboard.html')
+    return render_template('todays_predictions.html', predictions=Predictor())
 
+@app.route('/livescore')
+def livescore():
+    return render_template('livescore.html')
 
 @app.route("/submission", methods=["POST", "GET"])
 def submission():

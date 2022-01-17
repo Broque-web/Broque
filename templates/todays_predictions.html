@@ -69,7 +69,8 @@
             {% if not session['username']%}
             <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
             {% else %}
-            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+            <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+            <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
             {% endif %}
         </div>
         <div id="mobile-menu-wrap"></div>
@@ -132,19 +133,18 @@
                         <ul>
                             <li><a href="/">Home</a></li>
                             <li><a href="/slips">Slips</a></li>
-                            <li><a href="#">Blog</a></li>
                             {% if session['username']%}
                             <li class="active"><a href="#">Account</a>
                                 <ul class="dropdown">
-                                    <li><a href="/submission">Share Slips</a></li>
-                                    <li><a href="/dashboard">Purchases</a></li>
+                                    <li><a href="/submission">Share a Slip</a></li>
+                                    <li><a href="/todays-predictions">Predictions</a></li>
                                     <li><a href="/blog-sub">Share Blog Post</a></li>
-                                    <li><a href="#">SMS Bomber</a></li>
-                                    <li><a href="#">Email Bomber</a></li>
+                                    <li><a href="/referral">Referral</a></li>
                                     <li><a href="/settings">Settings</a></li>
                                 </ul>
                             </li>
                             {% endif %}
+                            <li><a href="/livescore">livescore</a></li>
                             <li><a href="/about">About</a></li>
                         </ul>
                     </nav>
@@ -154,7 +154,8 @@
                         {% if not session['username']%}
                         <button type="button" class="btn btn-primary" onclick="window.location.href='/signin'"><li class="fa fa-sign-in" style="color: white;"></li> Log in</button>
                         {% else %}
-                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> 0.00</div>
+                        <div class="price"><span style="font-size: 14px; color: #1d5ab6;">{{session['currency']}}</span> {{session['balance']}}</div>
+                        <a href="/settings"><img src="{{ url_for('static', filename='images/profiles/'+session['image'])}}" style="width: 40px; height: 40px; margin-left: 10px; border-radius: 50%;"></a>
                         {% endif %}
                     </div>
                 </div>
@@ -170,11 +171,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__text">
-                        <h4>Dashboard</h4>
+                        <h4>Todays Predictions</h4>
                         <div class="breadcrumb__links">
-                            <a href="./index.html">Home</a>
-                            <a href="./shop.html">Shop</a>
-                            <span>Dashboard</span>
+                            <a href="/">Home</a>
+                            <span>Todays Predictions</span>
                         </div>
                     </div>
                 </div>
@@ -188,55 +188,95 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
-                    <div class="shopping__cart__table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Content</th>
-                                    <th>Date</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for detail in details%}
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="{{ url_for('static', filename='images/shopping-cart/'+detail.page_name+'-phishing.png')}}" alt="">
+                    {% for prediction in predictions %}
+                    <div class="main_container">
+                        <div class="pred_container">
+                            <div class="type">
+                                <img src="{{prediction['league_flag']}}" style="height: 15px;">
+                                {{prediction['league_name']}}
+                            </div>
+                            <div class="info">
+                                <div class="match_info">
+                                  <span class="date">
+                                      {{prediction['date_time']}}
+                                  </span>
+                                  <span class="time">
+                                      {% if prediction['time_played'] == '' %}
+                                      Not started
+                                      {% else %}
+                                      {{prediction['time_played']}}
+                                      {% endif%}
+                                  </span>
+                                </div>
+                                <div class="prediction">
+                                    <div class="home_logo">
+                                      <img src="https://www.forebet.com/images/icons/blank-logo.png" alt="">
+                                        <div class="away_name">
+                                            {{prediction['home_team']}}
                                         </div>
-                                        <div class="product__cart__item__text">
-                                            <p>Email/username: <strong>{{detail.username}}</strong></p>
-                                            <p>Password: <strong>{{detail.password}}</strong></p>
+                                      </div>
+                                    <span class="home_pred">
+                                        {{prediction['home_score']}}
+                                    </span>
+                                    <span class="separator">
+                                        -
+                                    </span>
+                                    <span class="away_pred">
+                                        {{prediction['away_score']}}
+                                    </span>
+                                    <div class="away_logo">
+                                        <img src="https://www.forebet.com/images/icons/blank-logo.png" alt="">
+                                        <div class="away_name">
+                                            {{prediction['away_team']}}
                                         </div>
-                                    </td>
-                                    <td class="cart__price"><p>{{detail.date}}</p></td>
-                                </tr>
-                                {%endfor%}
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="continue__btn">
-                                <a href="#">Clear</a>
+                                      </div>
+                                </div>
+                                <div class="probability_title">
+                                  Probabilities
+                                </div>
+                                <div class="prb">
+                                    <div class="home_prob">
+                                        <div class="label_ll">
+                                          1X
+                                        </div>
+                                        <div class="prob">
+                                            {{prediction['home_prb']}}
+                                        </div>
+                                    </div>
+                                    <div class="draw_prob">
+                                      <div class="label_ll">
+                                          X
+                                        </div>
+                                        <div class="prob">
+                                            {{prediction['draw_prb']}}
+                                        </div>
+                                    </div>
+                                    <div class="away_prob">
+                                      <div class="label_ll">
+                                          2X
+                                        </div>
+                                        <div class="prob">
+                                            {{prediction['away_prb']}}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
                     </div>
+                    {% endfor %}
                 </div>
                 <div class="col-lg-4">
                     <div class="cart__total">
-                        <h6>Phishing content</h6>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores provident illum quisquam tenetur ab, esse maxime, nobis, quae praesentium totam nesciunt ullam unde adipisci.</p>
-                        <a href="#" class="primary-btn">Proceed to checkout</a>
+                        <h6>Todays Predictions</h6>
+                        <p>Matches displayed here are mathematical predictions based on last five matches between the teams, and last five matches of each team. Our algorithm takes into account player injuries, starting players, line-ups etc. The scores provided are predicted scores between the two teams in the match, this score also provides information on tips such as BTTs, Under 2.5, Handicap, Double Chance, etc.</p>
+                        <a href="/livescore" class="btn btn-primary">Go to livescore</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
     <!-- Shopping Cart Section End -->
-
+    
     <!-- Footer Section Begin -->
     <footer class="footer">
         <div class="container">
@@ -259,7 +299,7 @@
                             <li><a href="#">Betway</a></li>
                         </ul>
                     </div>
-                </div>
+                 </div>
                 <div class="col-lg-2 col-md-3 col-sm-6">
                     <div class="footer__widget">
                         <h6>Links</h6>
@@ -313,7 +353,137 @@
         </div>
     </div>
     <!-- Search End -->
+    <style>
+        .main_container{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .pred_container{
+            border-radius: 7px;
+            width: 70%;
+            margin: 15px;
+        }
 
+        .type{
+            margin: 0;
+            background-color: #242323;
+            color: white;
+            border-radius: 5px 7px 0px 0px;
+            padding: 5px 20px;
+            font-family: "Trebuchet MS";
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .type img{
+            margin-right: 10px;
+        }
+
+        .info{
+            border: 1px solid #c0c0c0;
+            border-radius: 0px 0px 5px 5px;
+        }
+
+        .info .match_info{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+        }
+
+        .info .prediction{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+        .info .probability_title{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            border-top: 1px solid #c0c0c0;
+            border-bottom: 1px solid #c0c0c0;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .info .prb{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .info .prb .label_ll{
+            font-size: 12px;
+            border: 2px solid  #3e8e7e;
+            background-color: #3e8e7e;
+            color: #ffffff;
+            border-radius: 50px;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-family: "Trebuchet MS";
+        }
+
+        .prob{
+            font-size: 12px;
+            font-weight: bolder;
+            padding-top: 7px;
+        }
+
+        .prob::after{
+            content: '%';
+        }
+
+        .match_info .date,.time{
+            font-size: 12px;
+            font-weight: bolder;
+        }
+
+        .time{
+            opacity: 0.7;
+        }
+
+        .date{
+            opacity: 0.7;
+        }
+
+        .prediction .home_pred,.separator,.away_pred{
+            font-size: 26px;
+        }
+
+        .prediction .home_logo img,.away_logo img{
+            height: 50px;
+        }
+
+        .prediction .home_logo,.away_logo{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .prediction .home_name,.away_name{
+            font-size: 12px;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        @media only screen and (max-width: 768px){
+            .pred_container{
+           width: 100%;
+        }
+        }
+    </style>
     <!-- Js Plugins -->
     <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
